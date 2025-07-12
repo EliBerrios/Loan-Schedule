@@ -1,0 +1,36 @@
+import pandas as pd
+
+def generate_amortization_schedule(principal, annual_rate, years):
+    monthly_rate = annual_rate / 12
+    total_payments = years * 12
+    monthly_payment = principal * monthly_rate / (1 - (1 + monthly_rate) ** -total_payments)
+    
+    schedule = []
+    balance = principal
+
+    for month in range(1, total_payments + 1):
+        interest = balance * monthly_rate
+        principal_paid = monthly_payment - interest
+        balance -= principal_paid
+
+        schedule.append({
+            'Month': month,
+            'Payment': round(monthly_payment, 2),
+            'Principal Paid': round(principal_paid, 2),
+            'Interest Paid': round(interest, 2),
+            'Remaining Balance': round(max(balance, 0), 2)
+        })
+
+    df = pd.DataFrame(schedule)
+    return df
+
+
+# Example usage:
+principal = 37000  # Loan amount
+annual_rate = .067  # 6.7% interest
+years = 6          # 6-year loan
+
+amortization_df = generate_amortization_schedule(principal, annual_rate, years)
+
+
+print(amortization_df.head(12))  # Display first 12 months
